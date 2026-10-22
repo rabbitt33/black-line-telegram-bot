@@ -23,9 +23,6 @@ from aiogram.types import (
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
-# ==================================================
-# 1. НАСТРОЙКИ ПРОЕКТА
-# ==================================================
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -64,9 +61,6 @@ dp = Dispatcher(storage=MemoryStorage())
 bot = None
 
 
-# ==================================================
-# 2. СОСТОЯНИЯ ЗАПИСИ
-# ==================================================
 
 class BookingStates(StatesGroup):
     choosing_service = State()
@@ -76,9 +70,6 @@ class BookingStates(StatesGroup):
     confirming = State()
 
 
-# ==================================================
-# 3. БАЗА ДАННЫХ
-# ==================================================
 
 def get_connection():
     connection = sqlite3.connect(DB_PATH)
@@ -105,9 +96,7 @@ def init_db():
         )
 
 
-# ==================================================
-# 4. КЛАВИАТУРЫ
-# ==================================================
+
 
 def main_menu():
     builder = InlineKeyboardBuilder()
@@ -217,9 +206,7 @@ def cancel_booking_menu(booking_id):
     )
 
 
-# ==================================================
-# 5. ФУНКЦИИ БАЗЫ ДАННЫХ
-# ==================================================
+
 
 def is_slot_available(booking_date, booking_time):
     with get_connection() as connection:
@@ -317,9 +304,7 @@ def delete_booking(booking_id, client_id=None):
         return cursor.rowcount > 0
 
 
-# ==================================================
-# 6. ПРИВЕТСТВИЕ
-# ==================================================
+
 
 @dp.message(CommandStart())
 async def start_command(message: Message, state: FSMContext):
@@ -351,9 +336,7 @@ async def start_command(message: Message, state: FSMContext):
     )
 
 
-# ==================================================
-# 7. ГЛАВНОЕ МЕНЮ
-# ==================================================
+
 
 @dp.callback_query(F.data == "main_menu")
 async def show_main_menu(callback: CallbackQuery, state: FSMContext):
@@ -366,9 +349,7 @@ async def show_main_menu(callback: CallbackQuery, state: FSMContext):
     )
 
 
-# ==================================================
-# 8. НАЧАЛО ЗАПИСИ
-# ==================================================
+
 
 @dp.callback_query(F.data == "new_booking")
 async def start_booking(callback: CallbackQuery, state: FSMContext):
@@ -411,9 +392,7 @@ async def choose_service(callback: CallbackQuery, state: FSMContext):
     )
 
 
-# ==================================================
-# 9. ВЫБОР ДАТЫ
-# ==================================================
+
 
 @dp.callback_query(
     BookingStates.choosing_date,
@@ -450,9 +429,7 @@ async def choose_date(callback: CallbackQuery, state: FSMContext):
     )
 
 
-# ==================================================
-# 10. ВЫБОР ВРЕМЕНИ
-# ==================================================
+
 
 @dp.callback_query(
     BookingStates.choosing_time,
@@ -490,9 +467,7 @@ async def choose_time(callback: CallbackQuery, state: FSMContext):
     )
 
 
-# ==================================================
-# 11. ИМЯ КЛИЕНТА
-# ==================================================
+
 
 @dp.message(BookingStates.entering_name)
 async def enter_name(message: Message, state: FSMContext):
@@ -530,9 +505,7 @@ async def enter_name(message: Message, state: FSMContext):
     )
 
 
-# ==================================================
-# 12. ПОДТВЕРЖДЕНИЕ ЗАПИСИ
-# ==================================================
+
 
 @dp.callback_query(
     BookingStates.confirming,
@@ -626,9 +599,7 @@ async def confirm_booking(callback: CallbackQuery, state: FSMContext):
         print(f"Не удалось уведомить администратора: {error}")
 
 
-# ==================================================
-# 13. ОТМЕНА ТЕКУЩЕГО ПРОЦЕССА ЗАПИСИ
-# ==================================================
+
 
 @dp.callback_query(F.data == "cancel_booking_flow")
 async def cancel_booking_flow(
@@ -666,9 +637,7 @@ async def back_to_dates(callback: CallbackQuery, state: FSMContext):
     )
 
 
-# ==================================================
-# 14. МОИ ЗАПИСИ
-# ==================================================
+
 
 @dp.callback_query(F.data == "my_bookings")
 async def my_bookings(callback: CallbackQuery):
@@ -708,9 +677,7 @@ async def my_bookings(callback: CallbackQuery):
     )
 
 
-# ==================================================
-# 15. ОТМЕНА СОЗДАННОЙ ЗАПИСИ
-# ==================================================
+
 
 @dp.callback_query(F.data.startswith("cancel_id:"))
 async def cancel_existing_booking(callback: CallbackQuery):
@@ -762,9 +729,7 @@ async def cancel_existing_booking(callback: CallbackQuery):
         print(f"Не удалось уведомить администратора: {error}")
 
 
-# ==================================================
-# 16. КОМАНДА АДМИНИСТРАТОРА: ВСЕ ЗАПИСИ
-# ==================================================
+
 
 @dp.message(Command("bookings"))
 async def admin_bookings(message: Message):
@@ -799,9 +764,7 @@ async def admin_bookings(message: Message):
         await message.answer(text)
 
 
-# ==================================================
-# 17. КОМАНДА АДМИНИСТРАТОРА: СТАТИСТИКА
-# ==================================================
+
 
 @dp.message(Command("stats"))
 async def admin_stats(message: Message):
@@ -829,9 +792,7 @@ async def admin_stats(message: Message):
     )
 
 
-# ==================================================
-# 18. СПРАВКА АДМИНИСТРАТОРА
-# ==================================================
+
 
 @dp.message(Command("admin"))
 async def admin_help(message: Message):
@@ -847,9 +808,7 @@ async def admin_help(message: Message):
     )
 
 
-# ==================================================
-# 19. ЗАПУСК БОТА
-# ==================================================
+
 
 async def main():
     global bot
